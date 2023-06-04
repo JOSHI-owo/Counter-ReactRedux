@@ -1,0 +1,113 @@
+action: is an abject whicg returns a string containing an action and then it contains a payload.
+
+Step 1:
+
+* First we create the store component, inside it we craete the "index .js" file.
+* code: 
+    const reducerFn={state={counter:0}, action}=>{
+        return state;
+    }
+    const store=createStore(reducerFn);
+
+Step 2:
+
+* Then we go to the main.js file and include the Provider in it, toprovide the state to all the components under it.
+* code changes:
+    
+    import { Provider } from 'react-redux'
+    import store from './store/index.js'
+    //here we added the provider , and provided the store to all the components
+    <Provider store={store}>
+        <React.StrictMode>
+        <App />
+        </React.StrictMode>
+    </Provider>
+
+Step 3:
+
+* Then we do changes in the App.js file, we use the useSelector() hook to acces the components of the store.
+* code:
+    import {useSelector} from "react-redux";
+    
+    function App(){
+        
+        const counter = useSelector((state)=>state.counter);
+    
+    }
+* Then we add the code for counter and buttons to the return() of the App.js file
+  code:
+    return (
+    <>
+      <div>
+        <h1>Counter App</h1>
+        <h2>{counter}</h2>
+        <button onClick={increment}>Increment</button> <br />
+        <button onClick={decrement}>Decrement</button>
+      </div>
+    </>
+  )
+
+* Then we define the functions increment and decrement:
+* Here we use useDispatch() to dispatch the unique action which will be accpeted by the store and then it will update the state
+* code:
+    import {useSelector, useDispatch} from "react-redux";
+
+    function App() {
+        const counter = useSelector((state)=>state.counter)
+        const dispatch=useDispatch();
+        const increment=()=>{
+            dispatch({type:"INC"});
+        }
+
+        const decrement=()=>{
+            dispatch({type:"DEC"});
+        }
+
+        const addBy=()=>{
+            dispatch({type:"ADD", payload:10});
+        }
+
+        return (
+            <>
+            <div>
+                <h1>Counter App</h1>
+                <h2>{counter}</h2>
+                <button onClick={increment}>Increment</button> <br />
+                <button onClick={decrement}>Decrement</button>
+                <button onClick={addBy}>Add by 10</button>
+            </div>
+            </>
+        )
+    }
+
+    export default App
+
+    Step 4:
+    * Now we move to the index.js in store
+    * There we define the reducer function of the corresponding action
+    * Notes: Reducer function should be synchronous 
+             We should not mutate the original state 
+    
+    * code:
+            import { legacy_createStore as createStore } from "redux";
+
+            const reducerFn = (state = { counter: 0 }, action) => {
+            // Synchronous Function
+            // We should not mutate the original state (Always create a copy of the original state and do changes to it. The original one should remain intact)
+
+            if (action.type === "INC") {
+                return { counter: state.counter + 1 };
+            }
+            if (action.type === "DEC") {
+                return { counter: state.counter - 1 };
+            }
+            if(action.type==="ADD){
+                return {counter: state.counter + action.payload};
+            }
+
+            return state;
+            };
+
+            const store = createStore(reducerFn);
+
+            export default store;
